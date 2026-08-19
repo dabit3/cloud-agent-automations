@@ -6,7 +6,7 @@ Each template includes a complete prompt and a recommended trigger. No code is r
 
 To use a template, paste its prompt into a new Devin automation.
 
-Devin starts the automation when a Slack message, GitHub event, or schedule matches the trigger. Some templates also require an MCP connection.
+Devin starts the automation when a schedule, Slack message, or GitHub event matches the trigger. Some templates also require an MCP connection.
 
 ## How to use the templates
 
