@@ -16,6 +16,9 @@ Devin starts the automation when a Slack message, GitHub event, or schedule matc
 4. Set the recommended trigger.
 5. If the example names or schedule do not match your environment, change them in the prompt.
 6. If the template uses an MCP, connect that MCP before the first run.
+7. Give each MCP connection the least access that the template needs. If a template only reads data, connect read-only credentials.
+
+The prompts contain safety rules, for example "Do not apply a migration". These rules guide Devin, but they are not a security boundary. The credentials that you connect set the real limit on what Devin can do.
 
 ## Slack triage
 
@@ -25,6 +28,8 @@ Trigger: a new message in the bug channel.
 
 ```text
 A user posted a bug report in the channel.
+
+IMPORTANT: If Devin posted the message, stop. Do not post a reply. A reply can start a new run and cause a loop.
 
 1. Read the report and the full thread.
 2. If the report includes reproduction steps, reproduce the bug.
@@ -42,6 +47,8 @@ Trigger: a new message in the support channel.
 
 ```text
 A user posted a support request in the channel.
+
+IMPORTANT: If Devin posted the message, stop. Do not post a reply. A reply can start a new run and cause a loop.
 
 1. Read the request and the full thread.
 2. Identify the specific technical issue or question.
@@ -61,6 +68,8 @@ Trigger: a new alert message in the alerts channel.
 
 ```text
 An alert was posted to Slack. The full event details are below.
+
+IMPORTANT: If Devin posted the message, stop. Do not post a reply. A reply can start a new run and cause a loop.
 
 1. Read the alert. Identify the affected service, metric, threshold, and time window.
 2. Use the Datadog MCP to pull metrics, logs, and traces from before the alert through recovery.
@@ -158,9 +167,13 @@ IMPORTANT: If devin-ai-integration[bot] authored the failing commit, reply 'Skip
 9. If you cannot make a safe fix, post the cause and the remaining blocker on the PR.
 ```
 
-### 8. Issue command
+### 8. Issue-to-PR command
 
-Trigger: an issue comment that contains /devin.
+Trigger: a /devin comment on a GitHub issue.
+
+A team member comments /devin on an issue that describes work. Devin reads the issue, makes the change, and opens a PR that resolves it.
+
+Note: Use this template on private repositories only. On a public repository, any GitHub user can comment /devin and start the automation.
 
 ```text
 A user commented /devin on a GitHub issue. The full event details are below.
@@ -185,14 +198,15 @@ Trigger: a weekly schedule.
 Scan for outdated dependencies.
 
 1. Find available updates in the package manager files.
-2. Read the release notes and migration guides for each update.
-3. Identify breaking changes, security fixes, and required code changes.
-4. Unless a release fixes a critical vulnerability, do not select it until it is at least 7 days old.
-5. Group compatible patch and minor updates in one PR.
-6. Put each major update in a separate PR.
-7. Run the tests, type checks, and build for each PR.
-8. If these checks pass, open a PR.
-9. Include the update risk, notable changes, and required follow-up work in each PR description.
+2. If an open PR from an earlier run already contains an update, skip that update.
+3. Read the release notes and migration guides for each update.
+4. Identify breaking changes, security fixes, and required code changes.
+5. Unless a release fixes a critical vulnerability, do not select it until it is at least 7 days old.
+6. Group compatible patch and minor updates in one PR.
+7. Put each major update in a separate PR.
+8. Run the tests, type checks, and build for each PR.
+9. If these checks pass, open a PR.
+10. Include the update risk, notable changes, and required follow-up work in each PR description.
 ```
 
 ### 10. Weekly changelog
@@ -208,7 +222,8 @@ Generate a weekly changelog.
 4. Categorize each PR as a feature, bug fix, improvement, or breaking change.
 5. Write one clear line for each change. Include the PR number and link.
 6. Put breaking changes first and state the required user action.
-7. Open a PR that adds the dated section to CHANGELOG.md.
+7. If an open PR from an earlier run updates CHANGELOG.md, add the new section to that PR.
+8. If no open changelog PR exists, open a PR that adds the dated section to CHANGELOG.md.
 ```
 
 ### 11. Stale PR reminders
@@ -238,34 +253,32 @@ Scan for dependency vulnerabilities.
 1. Run the audit commands for each package manager, for example `npm audit` or `pip-audit`.
 2. Compare the results with the GitHub Advisory Database.
 3. Remove duplicate findings for the same dependency and CVE.
-4. If a critical or high severity vulnerability has a patch, update the dependency.
-5. If you updated a dependency, run the related tests.
-6. If the tests pass, open one fix PR for each dependency update.
-7. List every related CVE and severity in the PR.
-8. If a critical or high severity vulnerability has no patch, open an issue with the available mitigation.
-9. Suggest an owner for each unresolved issue.
-10. Post a summary with the vulnerability count by severity, the fix PRs, and the unresolved issues.
+4. If an open PR already fixes the vulnerability, record its link and skip it.
+5. If a critical or high severity vulnerability has a patch, update the dependency.
+6. If you updated a dependency, run the related tests.
+7. If the tests pass, open one fix PR for each dependency update.
+8. List every related CVE and severity in the PR.
+9. If a critical or high severity vulnerability has no patch, open an issue with the available mitigation.
+10. Suggest an owner for each unresolved issue.
+11. Post a summary with the vulnerability count by severity, the fix PRs, and the unresolved issues.
 ```
 
-### 13. Secret scan
+### 13. Access review
 
-Trigger: a weekly schedule.
+Trigger: a monthly schedule.
 
 ```text
-Scan the codebase for leaked secrets.
+Review access to the GitHub repositories.
 
-CAUTION: Do not print, copy, or store a detected secret value in any output.
-
-1. Search tracked files for API keys, tokens, passwords, private keys, and connection strings.
-2. Use pattern matching and entropy analysis. Examine source files, .env files, and configuration files.
-3. Review each result to remove obvious false positives without using the detected value.
-4. For each confirmed finding, record only the secret type and file location.
-5. Tell the responsible owner to revoke and rotate the exposed credential.
-6. Replace the secret with an environment variable reference.
-7. Add the variable name and a safe placeholder to .env.example.
-8. Make sure that the proposed diff contains no secret value.
-9. Open one fix PR for each finding.
-10. State that the secret remains in git history. Do not rewrite history automatically.
+1. List the collaborators, teams, and permission levels for each repository.
+2. List the deploy keys, webhooks, and installed GitHub Apps.
+3. Flag collaborators with write access and no commits or reviews in the past 90 days.
+4. Flag outside collaborators with write or admin access.
+5. Flag deploy keys and webhooks with no clear owner or purpose.
+6. Review the branch protection rules for each default branch.
+7. Flag branches that allow force pushes or merges without a review.
+8. Do not change permissions, keys, or protection rules.
+9. Post a report to the #security Slack channel with each flag, its evidence, and a recommended action.
 ```
 
 ### 14. OWASP scan
@@ -283,11 +296,12 @@ Run an OWASP Top 10 security review.
 6. Separate confirmed findings from findings that need manual review.
 
 For each confirmed finding:
-1. Add a regression test.
-2. Implement the smallest safe fix.
-3. Run the related tests.
-4. If the tests pass, open a fix PR.
-5. Include the OWASP category, severity, evidence, and affected path in the PR.
+1. If an open PR already fixes the finding, record its link and continue to the next finding.
+2. Add a regression test.
+3. Implement the smallest safe fix.
+4. Run the related tests.
+5. If the tests pass, open a fix PR.
+6. Include the OWASP category, severity, evidence, and affected path in the PR.
 
 Post a summary of confirmed findings, review items, and fix PRs.
 ```
@@ -372,10 +386,11 @@ Audit slow queries with the PostgreSQL MCP.
 3. Use read-only execution plans to find large sequential scans and inefficient joins.
 4. Do not execute write queries or expensive analysis against production.
 5. Find the source of each query in the codebase. Search both ORM calls and raw SQL.
-6. If the evidence supports an index, open a PR with the required migration.
-7. Include a benchmark, rollout note, and rollback plan in the PR.
-8. Post a summary with each query fingerprint, cause, impact, recommendation, and fix PR.
-9. Do not include query parameter values in the summary.
+6. If an open PR from an earlier run already fixes the query, record its link and skip it.
+7. If the evidence supports an index, open a PR with the required migration.
+8. Include a benchmark, rollout note, and rollback plan in the PR.
+9. Post a summary with each query fingerprint, cause, impact, recommendation, and fix PR.
+10. Do not include query parameter values in the summary.
 ```
 
 ### 20. Database health report (Amazon RDS Postgres)
@@ -407,10 +422,11 @@ Detect schema drift with the Prisma MCP.
 2. If all three match, reply "No drift" and stop.
 3. If these sources differ, list each table, column, type, constraint, and index difference.
 4. Use the migration history to identify the likely source of the drift.
-5. If the intended schema is clear, generate the required schema or migration change.
-6. If you generated a change, run the schema validation and migration tests.
-7. If the tests pass, open a PR that explains the drift and the chosen direction.
-8. If the intended schema is unclear, report the differences and request a human decision.
+5. If an open PR from an earlier run already fixes this drift, reply with its link and stop.
+6. If the intended schema is clear, generate the required schema or migration change.
+7. If you generated a change, run the schema validation and migration tests.
+8. If the tests pass, open a PR that explains the drift and the chosen direction.
+9. If the intended schema is unclear, report the differences and request a human decision.
 
 CAUTION: Do not apply a migration to the live database.
 ```
@@ -427,8 +443,9 @@ Audit row-level security policies with the Supabase MCP.
 3. Flag tables without row-level security.
 4. Flag policies that allow anonymous users to write data.
 5. Compare each policy with the access rules in the application code.
-6. For each confirmed gap, create a migration and a policy test.
-7. Open a PR with the proposed policies and the supporting evidence.
+6. If an open PR already fixes a gap, record its link and skip that gap.
+7. For each remaining gap, create a migration and a policy test.
+8. Open a PR with the proposed policies and the supporting evidence.
 
 CAUTION: Do not apply a policy to the live database. A wrong policy can expose user data.
 ```
@@ -500,7 +517,8 @@ Sync design tokens from Figma into the repository.
 6. Flag removed tokens that still have references in the codebase.
 7. Update the token files. Do not remove a token that the code still uses.
 8. Run the related build and visual tests.
-9. Open a PR with a table of changes and any unresolved mapping.
+9. If an open token PR from an earlier run exists, update that PR. Do not open a second PR.
+10. If no open token PR exists, open a PR with a table of changes and any unresolved mapping.
 ```
 
 ### 27. Component parity report (Figma)
@@ -571,9 +589,10 @@ Keep base images current with the Docker Hub MCP.
 2. Pull supported stable tags, digests, release notes, and vulnerability data from Docker Hub.
 3. Flag unsupported images, known vulnerabilities, and newer stable versions.
 4. Unless a release fixes a critical vulnerability, do not select it until it is at least 7 days old.
-5. Update each image to an appropriate stable version and pin its digest.
-6. Build and scan each image locally. Run the related tests.
-7. If all checks pass, open a PR with the updates, risks, and release-note links.
+5. If an open PR already updates the image, skip that image.
+6. Update each image to an appropriate stable version and pin its digest.
+7. Build and scan each image locally. Run the related tests.
+8. If all checks pass, open a PR with the updates, risks, and release-note links.
 ```
 
 ### 31. Infrastructure drift check (Pulumi)
@@ -607,6 +626,7 @@ Investigate failed webhooks with the Stripe MCP.
 2. Group failures by endpoint, event type, and error.
 3. Compare each failure with the endpoint logs.
 4. Find the handler code and existing issues for each failed event type.
+5. If an open PR already fixes a handler bug, record its link and skip that bug.
 
 For each confirmed handler bug:
 1. Add a regression test.
@@ -614,10 +634,10 @@ For each confirmed handler bug:
 3. Run the related tests.
 4. If the tests pass, open a fix PR.
 
-5. After the fix deploys, make sure that the handler processes duplicate events safely.
-6. Prepare a replay list with event IDs only.
-7. Before you resend any event, ask for human approval.
-8. Post a summary with failure counts, causes, fix PRs, and replay status.
+6. After the fix deploys, make sure that the handler processes duplicate events safely.
+7. Prepare a replay list with event IDs only.
+8. Before you resend any event, ask for human approval.
+9. Post a summary with failure counts, causes, fix PRs, and replay status.
 
 CAUTION: Do not create, change, or refund payments. Do not include customer or payment data in the summary.
 ```
@@ -792,10 +812,11 @@ For each at-risk SLO:
 7. Suggest an owner from CODEOWNERS or the recent change history.
 
 If a code change is the identified cause:
-1. Add a regression test.
-2. Implement the smallest safe fix.
-3. Run the related tests.
-4. If the tests pass, open a fix PR.
+1. If an open PR already fixes the cause, record its link and continue to the next SLO.
+2. Add a regression test.
+3. Implement the smallest safe fix.
+4. Run the related tests.
+5. If the tests pass, open a fix PR.
 
 Post a report to the #reliability Slack channel. Include the SLO, budget remaining, burn rate, forecast, cause, owner, and next action.
 If a fix PR exists, include its link.
