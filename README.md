@@ -4,7 +4,7 @@ Prompt templates for [Devin automations](https://docs.devin.ai/product-guides/au
 
 Each template includes a complete prompt and a recommended trigger. No code is required.
 
-To use a template, paste its prompt into a new Devin automation. Then select the recommended trigger.
+To use a template, paste its prompt into a new Devin automation.
 
 Devin starts the automation when a Slack message, GitHub event, or schedule matches the trigger. Some templates also require an MCP connection.
 
