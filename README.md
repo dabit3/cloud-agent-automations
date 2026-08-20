@@ -2,21 +2,20 @@
 
 Prompt templates for [Devin automations](https://docs.devin.ai/product-guides/automations).
 
-Each template includes a complete prompt and a recommended trigger. No code is required.
+Each template is a complete prompt that tells Devin to create an automation, including the recommended trigger. No code is required.
 
-To use a template, paste its prompt into a new Devin automation.
+To use a template, paste its full prompt into a new Devin session. Devin then creates the automation for you.
 
 Devin starts the automation when a schedule, Slack message, or GitHub event matches the trigger. Some templates also require an MCP connection.
 
 ## How to use the templates
 
 1. Choose a template below.
-2. Create a new Devin automation.
-3. Paste the prompt into the automation.
-4. Set the recommended trigger.
-5. If the example names or schedule do not match your environment, change them in the prompt.
-6. If the template uses an MCP, connect that MCP before the first run.
-7. Give each MCP connection the least access that the template needs. If a template only reads data, connect read-only credentials.
+2. Copy the full prompt, including the "Create a Devin automation" line and the trigger.
+3. If the example names, channels, or schedule do not match your environment, change them in the prompt.
+4. Paste the prompt into a new Devin session. Devin creates the automation and asks about any missing details, such as the exact Slack channel or repository.
+5. If the template uses an MCP, connect that MCP before the first run.
+6. Give each MCP connection the least access that the template needs. If a template only reads data, connect read-only credentials.
 
 The prompts contain safety rules, for example "Do not apply a migration". These rules guide Devin, but they are not a security boundary. The credentials that you connect set the real limit on what Devin can do.
 
@@ -24,9 +23,13 @@ The prompts contain safety rules, for example "Do not apply a migration". These 
 
 ### 1. Bug triage
 
+```text
+Create a Devin automation named "Bug triage".
+
 Trigger: a new message in the bug channel.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 A user posted a bug report in the channel.
 
 IMPORTANT: If Devin posted the message, stop. Do not post a reply. A reply can start a new run and cause a loop.
@@ -43,9 +46,13 @@ IMPORTANT: If Devin posted the message, stop. Do not post a reply. A reply can s
 
 ### 2. Support replies
 
+```text
+Create a Devin automation named "Support replies".
+
 Trigger: a new message in the support channel.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 A user posted a support request in the channel.
 
 IMPORTANT: If Devin posted the message, stop. Do not post a reply. A reply can start a new run and cause a loop.
@@ -64,9 +71,13 @@ IMPORTANT: If Devin posted the message, stop. Do not post a reply. A reply can s
 
 ### 3. Alert investigation
 
+```text
+Create a Devin automation named "Alert investigation".
+
 Trigger: a new alert message in the alerts channel.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 An alert was posted to Slack. The full event details are below.
 
 IMPORTANT: If Devin posted the message, stop. Do not post a reply. A reply can start a new run and cause a loop.
@@ -86,9 +97,13 @@ IMPORTANT: If Devin posted the message, stop. Do not post a reply. A reply can s
 
 ### 4. Sentry error fixes
 
+```text
+Create a Devin automation named "Sentry error fixes".
+
 Trigger: a daily schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Use the Sentry MCP to find unresolved issues from the past 24 hours.
 
 1. Exclude issues tagged 'wontfix' or 'expected-behavior'.
@@ -111,9 +126,13 @@ Post a summary with each Sentry issue, its frequency, its status, and its fix PR
 
 ### 5. Daily error report
 
+```text
+Create a Devin automation named "Daily error report".
+
 Trigger: a daily schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Compile a daily error report with the Datadog MCP.
 
 1. Query the error rates and error logs for the key services from the past 24 hours.
@@ -130,9 +149,13 @@ Use these sections: top errors, new errors, increased errors, likely causes, sug
 
 ### 6. Capacity review
 
+```text
+Create a Devin automation named "Capacity review".
+
 Trigger: a weekly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Run a capacity review with the Datadog MCP.
 
 1. Pull CPU, memory, request-rate, and queue-depth trends for the key services from the past 30 days.
@@ -149,9 +172,13 @@ Run a capacity review with the Datadog MCP.
 
 ### 7. CI failure fix
 
+```text
+Create a Devin automation named "CI failure fix".
+
 Trigger: a failed check run on GitHub.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 A CI check failed. The full event details are below.
 
 IMPORTANT: If devin-ai-integration[bot] authored the failing commit, reply 'Skipping: commit authored by Devin' and stop.
@@ -169,13 +196,17 @@ IMPORTANT: If devin-ai-integration[bot] authored the failing commit, reply 'Skip
 
 ### 8. Issue-to-PR command
 
-Trigger: a /devin comment on a GitHub issue.
-
 A team member comments /devin on an issue that describes work. Devin reads the issue, makes the change, and opens a PR that resolves it.
 
 Note: Use this template on private repositories only. On a public repository, any GitHub user can comment /devin and start the automation.
 
 ```text
+Create a Devin automation named "Issue-to-PR command".
+
+Trigger: a /devin comment on a GitHub issue.
+
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 A user commented /devin on a GitHub issue. The full event details are below.
 
 1. Read the /devin comment, the issue title, the issue body, and all follow-up comments.
@@ -192,9 +223,13 @@ A user commented /devin on a GitHub issue. The full event details are below.
 
 ### 9. Dependency updates
 
+```text
+Create a Devin automation named "Dependency updates".
+
 Trigger: a weekly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Scan for outdated dependencies.
 
 1. Find available updates in the package manager files.
@@ -211,9 +246,13 @@ Scan for outdated dependencies.
 
 ### 10. Weekly changelog
 
+```text
+Create a Devin automation named "Weekly changelog".
+
 Trigger: a weekly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Generate a weekly changelog.
 
 1. List all PRs merged in the past 7 days.
@@ -228,9 +267,13 @@ Generate a weekly changelog.
 
 ### 11. Stale PR reminders
 
+```text
+Create a Devin automation named "Stale PR reminders".
+
 Trigger: a weekly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Scan for stale pull requests.
 
 1. List open PRs with no human activity for more than 7 days.
@@ -245,9 +288,13 @@ Scan for stale pull requests.
 
 ### 12. Vulnerability scan
 
+```text
+Create a Devin automation named "Vulnerability scan".
+
 Trigger: a weekly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Scan for dependency vulnerabilities.
 
 1. Run the audit commands for each package manager, for example `npm audit` or `pip-audit`.
@@ -265,9 +312,13 @@ Scan for dependency vulnerabilities.
 
 ### 13. Access review
 
+```text
+Create a Devin automation named "Access review".
+
 Trigger: a monthly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Review access to the GitHub repositories.
 
 1. List the collaborators, teams, and permission levels for each repository.
@@ -283,9 +334,13 @@ Review access to the GitHub repositories.
 
 ### 14. OWASP scan
 
+```text
+Create a Devin automation named "OWASP scan".
+
 Trigger: a monthly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Run an OWASP Top 10 security review.
 
 1. Search for SQL, command, and template injection paths.
@@ -308,9 +363,13 @@ Post a summary of confirmed findings, review items, and fix PRs.
 
 ### 15. Cloudflare audit
 
+```text
+Create a Devin automation named "Cloudflare audit".
+
 Trigger: a weekly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Run a weekly Cloudflare security audit.
 
 1. Use the Cloudflare Audit Logs MCP to pull events from the past 7 days.
@@ -326,9 +385,13 @@ Run a weekly Cloudflare security audit.
 
 ### 16. Weekly status update
 
+```text
+Create a Devin automation named "Weekly status update".
+
 Trigger: a weekly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Compile a weekly engineering status update with the Notion MCP.
 
 1. List PRs merged in the past 7 days.
@@ -342,9 +405,13 @@ Compile a weekly engineering status update with the Notion MCP.
 
 ### 17. Backlog cleanup
 
+```text
+Create a Devin automation named "Backlog cleanup".
+
 Trigger: a monthly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Clean the Linear backlog.
 
 1. Find issues with no activity for 60 days or more.
@@ -359,9 +426,13 @@ Clean the Linear backlog.
 
 ### 18. Sprint report
 
+```text
+Create a Devin automation named "Sprint report".
+
 Trigger: a daily schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Generate a daily sprint report from Asana.
 
 1. Use the Asana MCP to list tasks in the active projects.
@@ -376,9 +447,13 @@ Generate a daily sprint report from Asana.
 
 ### 19. Slow query audit (PostgreSQL)
 
+```text
+Create a Devin automation named "Slow query audit (PostgreSQL)".
+
 Trigger: a weekly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Audit slow queries with the PostgreSQL MCP.
 
 1. Query pg_stat_statements for queries with the highest total time, mean time, and call count.
@@ -395,9 +470,13 @@ Audit slow queries with the PostgreSQL MCP.
 
 ### 20. Database health report (Amazon RDS Postgres)
 
+```text
+Create a Devin automation named "Database health report (Amazon RDS Postgres)".
+
 Trigger: a weekly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Compile a health report for the RDS Postgres instances.
 
 1. Use the Amazon RDS MCP to pull storage use, connection counts, and replication lag.
@@ -413,9 +492,13 @@ Compile a health report for the RDS Postgres instances.
 
 ### 21. Schema drift check (Prisma)
 
+```text
+Create a Devin automation named "Schema drift check (Prisma)".
+
 Trigger: a daily schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Detect schema drift with the Prisma MCP.
 
 1. Compare the Prisma schema, migration history, and live database schema.
@@ -433,9 +516,13 @@ CAUTION: Do not apply a migration to the live database.
 
 ### 22. Row-level security audit (Supabase)
 
+```text
+Create a Devin automation named "Row-level security audit (Supabase)".
+
 Trigger: a weekly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Audit row-level security policies with the Supabase MCP.
 
 1. List all tables in the public schema and their row-level security status.
@@ -452,9 +539,13 @@ CAUTION: Do not apply a policy to the live database. A wrong policy can expose u
 
 ### 23. Query cost audit (BigQuery)
 
+```text
+Create a Devin automation named "Query cost audit (BigQuery)".
+
 Trigger: a weekly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Audit query costs with the BigQuery MCP.
 
 1. Query the job history from the past 7 days.
@@ -469,9 +560,13 @@ Audit query costs with the BigQuery MCP.
 
 ### 24. Data governance report (Dataplex)
 
+```text
+Create a Devin automation named "Data governance report (Dataplex)".
+
 Trigger: a weekly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Compile a data governance report with the Dataplex MCP.
 
 1. List data assets across the lakes and zones.
@@ -485,9 +580,13 @@ Compile a data governance report with the Dataplex MCP.
 
 ### 25. Dashboard repair (Metabase)
 
+```text
+Create a Devin automation named "Dashboard repair (Metabase)".
+
 Trigger: a merged PR that contains a database migration.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 A PR with a database migration was merged. The full event details are below.
 
 1. Read the migration. List each renamed, changed, or removed table and column.
@@ -504,9 +603,13 @@ A PR with a database migration was merged. The full event details are below.
 
 ### 26. Design token sync (Figma)
 
+```text
+Create a Devin automation named "Design token sync (Figma)".
+
 Trigger: a weekly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Sync design tokens from Figma into the repository.
 
 1. Use the Figma MCP to pull published color, typography, and spacing variables.
@@ -523,9 +626,13 @@ Sync design tokens from Figma into the repository.
 
 ### 27. Component parity report (Figma)
 
+```text
+Create a Devin automation named "Component parity report (Figma)".
+
 Trigger: a monthly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Compare the Figma component library with the code component library.
 
 1. Use the Figma MCP to list published components, variants, properties, and states.
@@ -541,9 +648,13 @@ Compare the Figma component library with the code component library.
 
 ### 28. Deployment failure fix (Vercel)
 
+```text
+Create a Devin automation named "Deployment failure fix (Vercel)".
+
 Trigger: a failed production deployment on Vercel.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 A production deployment failed on Vercel. The full event details are below.
 
 1. Use the Vercel MCP to pull the build logs and deployment metadata.
@@ -560,9 +671,13 @@ A production deployment failed on Vercel. The full event details are below.
 
 ### 29. Release regression watch (Sentry)
 
+```text
+Create a Devin automation named "Release regression watch (Sentry)".
+
 Trigger: a new production release.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 A new release went to production.
 
 1. Use the Sentry MCP to compare this release with the prior release over equivalent traffic windows.
@@ -580,9 +695,13 @@ A new release went to production.
 
 ### 30. Base image updates (Docker Hub)
 
+```text
+Create a Devin automation named "Base image updates (Docker Hub)".
+
 Trigger: a weekly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Keep base images current with the Docker Hub MCP.
 
 1. List the base image, tag, and digest in each Dockerfile.
@@ -597,9 +716,13 @@ Keep base images current with the Docker Hub MCP.
 
 ### 31. Infrastructure drift check (Pulumi)
 
+```text
+Create a Devin automation named "Infrastructure drift check (Pulumi)".
+
 Trigger: a daily schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Detect infrastructure drift with the Pulumi MCP.
 
 1. Use read-only refresh previews and update previews for each stack.
@@ -617,9 +740,13 @@ CAUTION: Do not run `pulumi up` or `pulumi destroy`. Do not apply or revert infr
 
 ### 32. Webhook failure recovery (Stripe)
 
+```text
+Create a Devin automation named "Webhook failure recovery (Stripe)".
+
 Trigger: a daily schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Investigate failed webhooks with the Stripe MCP.
 
 1. List webhook events that failed delivery in the past 24 hours.
@@ -644,9 +771,13 @@ CAUTION: Do not create, change, or refund payments. Do not include customer or p
 
 ### 33. Feature request mining (HubSpot)
 
+```text
+Create a Devin automation named "Feature request mining (HubSpot)".
+
 Trigger: a weekly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Find product signals in support tickets with the HubSpot MCP.
 
 1. Pull tickets closed in the past 7 days.
@@ -661,9 +792,13 @@ Find product signals in support tickets with the HubSpot MCP.
 
 ### 34. Zap health report (Zapier)
 
+```text
+Create a Devin automation named "Zap health report (Zapier)".
+
 Trigger: a weekly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Compile a Zap health report with the Zapier MCP.
 
 1. List Zaps, expected schedules, owners, and run history from the past 7 days.
@@ -680,9 +815,13 @@ Compile a Zap health report with the Zapier MCP.
 
 ### 35. Roadmap sync (Airtable)
 
+```text
+Create a Devin automation named "Roadmap sync (Airtable)".
+
 Trigger: a daily schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Sync the roadmap from Airtable to GitHub.
 
 1. Use the Airtable MCP to list roadmap records with the status "Ready for dev".
@@ -699,9 +838,13 @@ Sync the roadmap from Airtable to GitHub.
 
 ### 36. Unanswered questions digest (Slack)
 
+```text
+Create a Devin automation named "Unanswered questions digest (Slack)".
+
 Trigger: a daily schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Find unanswered questions in the #help channel.
 
 1. Use the Slack MCP to list threads from the past 24 hours with no clear answer.
@@ -715,9 +858,13 @@ Find unanswered questions in the #help channel.
 
 ### 37. TODO comment sync (Asana)
 
+```text
+Create a Devin automation named "TODO comment sync (Asana)".
+
 Trigger: a weekly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Turn TODO comments into Asana tasks with the Asana MCP.
 
 1. Search the codebase for TODO and FIXME comments.
@@ -733,9 +880,13 @@ Turn TODO comments into Asana tasks with the Asana MCP.
 
 ### 38. Ticket reconciliation
 
+```text
+Create a Devin automation named "Ticket reconciliation".
+
 Trigger: a weekly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Reconcile Jira tickets with the state of the code.
 
 1. Use the Atlassian MCP to list tickets in the current sprint.
@@ -752,9 +903,13 @@ Reconcile Jira tickets with the state of the code.
 
 ### 39. Docs drift check (Notion)
 
+```text
+Create a Devin automation named "Docs drift check (Notion)".
+
 Trigger: a weekly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Find drift between the Notion docs and the repository.
 
 1. Use the Notion MCP to pull the engineering setup and runbook pages.
@@ -770,9 +925,13 @@ Find drift between the Notion docs and the repository.
 
 ### 40. Architecture decision capture (Slack)
 
+```text
+Create a Devin automation named "Architecture decision capture (Slack)".
+
 Trigger: a Slack message that contains /decision.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 A user posted /decision in a Slack thread. The full event details are below.
 
 1. Use the Slack MCP to read the full thread and its linked messages.
@@ -792,9 +951,13 @@ A user posted /decision in a Slack thread. The full event details are below.
 
 ### 41. SLO error budget forecast (Datadog)
 
+```text
+Create a Devin automation named "SLO error budget forecast (Datadog)".
+
 Trigger: an hourly schedule.
 
-```text
+When the automation runs, start a session with the prompt below. Everything after this line is the session prompt.
+
 Forecast SLO error budget risk with the Datadog MCP.
 
 1. Pull all active service SLOs, targets, windows, remaining error budgets, and burn rates.
